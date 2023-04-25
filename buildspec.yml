@@ -7,9 +7,12 @@ phases:
   pre_build:
     commands:
       - REPO_NAME=fluentbit-dev-app
+      - REPO_STATIC_NAME=fluentbit-dev-my-firelens
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - REPO=$(aws ecr describe-repositories --repository-names $REPO_NAME --query 'repositories[0].repositoryUri' --output text)
       - IMAGE=$REPO:latest
+      - REPO_STATIC=$(aws ecr describe-repositories --repository-names $REPO_STATIC_NAME --query 'repositories[0].repositoryUri' --output text)
+      - IMAGE_STATIC=$REPO_STATIC:latest
   build:
     commands:
       - docker build -t $IMAGE .
@@ -18,7 +21,7 @@ phases:
     commands:
       - echo "In post_build phase"
       - echo "Image pushed to ECR"
-      - printf '[{"name":"fluentbit-dev-app","imageUri":"%s"}]' $IMAGE > imagedefinitions.json
+      - printf '[{"name":"app","imageUri":"%s"},{"name":"log_router","imageUri":"%s"}]' $IMAGE $IMAGE_STATIC > imagedefinitions.json
 
 artifacts:
   files:
