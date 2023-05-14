@@ -13,6 +13,7 @@ func main() {
 		fmt.Printf("activity: This is activity %s\n", r.URL.Path)
 		fmt.Printf("log: This is normal log %s\n", r.URL.Path)
 		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 	})
 
 	http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request) {
