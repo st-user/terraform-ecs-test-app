@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html"
+	"io"
 	"log"
 	"net/http"
 )
@@ -32,16 +33,20 @@ func main() {
 		environmentName := "Beta"
 		profileName := "my-appconfig-configuration-profile"
 		resp, err := http.Get("http://localhost:2772/applications/" + applicationName + "/environments/" + environmentName + "/configurations/" + profileName)
+
+		w.Header().Set("Content-Type", "application/json")
+
 		if err != nil {
 			fmt.Fprintf(w, "Error: %s", err)
 			return
 		}
 		defer resp.Body.Close()
-		respBody := make([]byte, 1024)
-		// Read all bytes from response body and convert to string
-		resp.Body.Read(respBody)
-		fmt.Fprintf(w, "Response from appconfig: %s", string(respBody))
 
+		_, err = io.Copy(w, resp.Body)
+		if err != nil {
+			fmt.Fprintf(w, "Error: %s", err)
+			return
+		}
 	})
 
 	fmt.Println("Start.")
