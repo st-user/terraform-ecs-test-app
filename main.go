@@ -29,9 +29,19 @@ func main() {
 
 		// send http request to 'http://localhost:2772/'
 		// sample URL: $ curl "http://localhost:2772/applications/application_name/environments/environment_name/configurations/configuration_name"
-		applicationName := "my-appconfig-ecs-application"
-		environmentName := "Beta"
-		profileName := "my-appconfig-configuration-profile"
+		applicationName := r.URL.Query().Get("applicationName")
+		if applicationName == "" {
+			applicationName = "my-appconfig-ecs-application"
+		}
+
+		environmentName := r.URL.Query().Get("environmentName")
+		if environmentName == "" {
+			environmentName = "Beta"
+		}
+		profileName := r.URL.Query().Get("profileName")
+		if profileName == "" {
+			profileName = "my-appconfig-configuration-profile"
+		}
 		resp, err := http.Get("http://localhost:2772/applications/" + applicationName + "/environments/" + environmentName + "/configurations/" + profileName)
 
 		w.Header().Set("Content-Type", "application/json")
